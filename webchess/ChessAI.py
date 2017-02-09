@@ -8,8 +8,6 @@ class chess:
     #captal letters are for white pieces and small letters for black pieces
     # p = pawn, r = rook, b = bishop, q = queen, k = king, n = knight
 
-    
-
     def set_pos(self, value):
         tmp = value.split('/')
         for i in range(8):
@@ -91,7 +89,61 @@ class chess:
                         elif(chess.is_opponent(self.board[i][j], self.board[x][y])):
                             yield (i, j, x, y, 1)
 
+                #pawn moves
+                if(self.board[i][j].lower() == 'p'):
+                    d = 1
+                    if(color == 1): d = -1
+                    moves = [(d, 0), (d, 1), (d, -1), (2 * d, 0)]
+                    for mv in moves:
+                        x, y = i + mv[0], j + mv[1]
+                        if(x < 0 or x >=8 or y < 0 or y >= 8):
+                            continue
+                        if(mv[1] == 0):
+                            if(mv[0] == d):
+                                if(self.board[x][y] == ".") :
+                                    yield (i, j, x, y, 0)
+                            else:
+                                if(((color == 0 and i == 1) or (color == 1 and i == 6)) and self.board[i+d][j] == "." and self.board[x][y] == '.'):
+                                    yield (i, j, x, y, 0)
+                        elif(self.board[x][y] != '.' and chess.is_opponent(self.board[i][j], self.board[x][y])):
+                            yield (i,j, x, y, 1)
 
+                #king moves
+                if(self.board[i][j].lower() == 'k'):
+                    moves = [(0, 1), (0, -1), (1, 1), (1, 0), (1, -1), (-1, 1), (-1, 0), (-1, -1)]
+                    for d in moves:
+                        x, y = i + d[0], j + d[1]
+                        if(x < 0 or x >=8 or y < 0 or y >= 8):
+                            continue
+                        if(self.board[x][y] == '.'):
+                            yield (i, j, x, y, 0)
+                        elif(chess.is_opponent(self.board[i][j], self.board[x][y])):
+                            yield (i, j, x, y, 1)
+
+    def next_possible_moves(self, color):
+        for mv in self.next_move_gen(color):
+            tmp = chess(str(self))
+            tmp.move(mv)
+            if(tmp.king_is_under_attack(color)):
+                continue
+            x, y = mv[2], mv[3]
+            if((color == 0 and self.board[x][y] == "K") or (color == 1 and self.board[x][y] == "k")):
+                continue
+            yield mv
+    
+    def king_is_under_attack(self, color):
+        opp = 1 - color
+        kx, ky = 0, 0
+        for i in range(8):
+            for j in range(8):
+                if((self.board[i][j] == 'k' and color == 0) or (self.board[i][j] == 'K' and color == 1)):
+                    kx, ky = i, j
+        for mv in list(self.next_move_gen(opp)):
+            if(mv[2] == kx and mv[3] == ky):
+                return True
+        return False
+
+                        
     def move(self, mv):
         x0, y0 = mv[0], mv[1]
         x1, y1 = mv[2], mv[3]
@@ -128,10 +180,10 @@ import sys
 def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
     if(depth == 0):
         return node.heuristic_value(player)
+    #print(len(list(node.next_possible_moves(player))))
     if(maxim):
         v = [-inf, None]
-        print(len(list(node.next_move_gen(player))))
-        for mv in list(node.next_move_gen(player)):
+        for mv in list(node.next_possible_moves(player)):
             child = chess(str(node))
             child.move(mv)
             tmp = alpha_beta_pruning(child, depth-1, a, b, player, 0)
@@ -144,8 +196,7 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
         return v
     else:
         v = [inf, None]
-        print(len(list(node.next_move_gen(player))))
-        for mv in list(node.next_move_gen(1 - player)):
+        for mv in list(node.next_possible_moves(1 - player)):
             child = chess(str(node))
             child.move(mv)
             tmp = alpha_beta_pruning(child, depth-1, a, b, player, 1)
@@ -157,16 +208,12 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
                 break
         return v
 
-tmp = chess("rnbqkbnr/......../......../......../......../......../......../RNBQKBNR//")
+tmp = chess()
 tmp.pr_table()
+
 i = 0
 while(input() == "1"):
-    mv = alpha_beta_pruning(tmp, 4, player = 1 - i%2)
-    print(mv)
+    mv = alpha_beta_pruning(tmp, 3, -inf, inf, i % 2, 1)
     tmp.move(mv[1])
-    i = 1 - i
     tmp.pr_table()
-
-tmp.pr_table()
-
-
+    i += 1
