@@ -115,6 +115,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'icp95.project@gmail.com'
+EMAIL_HOST_PASSWORD = 'ostadnowzari'
+SERVER_EMAIL = 'icp95.project@gmail.com'
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/

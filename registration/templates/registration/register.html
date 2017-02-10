@@ -1,0 +1,34 @@
+{% block content %}
+<html>
+<head></head>
+<body>
+	<h1>Sign-up :)</h1>
+	<h4>{{ error }}</h4>
+	<form method="post" action="">
+		{% csrf_token %}
+		<table>
+			<tr>
+				<td>username:</td>
+				<td><input type="text" name="username" required></td>
+			</tr>
+			<tr>
+				<td>email:</td>
+				<td><input type="email" name="email" required></td>
+			</tr>
+			<tr>
+				<td>password:</td>
+				<td><input type="password" name="password" required></td>
+			</tr>
+			<tr>
+				<td>password(again):</td>
+				<td><input type="password" name="repassword" required></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" name=""></td>
+			</tr>
+		</table>
+	</form>
+</body>
+
+</html>
+{% endblock %}

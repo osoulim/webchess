@@ -209,9 +209,4 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
 tmp = chess()
 tmp.pr_table()
 
-i = 0
-while(input() == "1"):
-    mv = alpha_beta_pruning(tmp, 3, -inf, inf, i % 2, 1)
-    tmp.move(mv[1])
-    tmp.pr_table()
-    i += 1
+print(len(list(tmp.next_possible_moves(0))))

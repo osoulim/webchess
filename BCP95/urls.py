@@ -17,7 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^accounts/', include('registration.urls')),
+    url(r'^accounts/', include('registration.urls'), name="account"),
     url(r'^webchess/', include('webchess.urls')),
     url(r'^admin/', admin.site.urls),
 ]
