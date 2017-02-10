@@ -175,8 +175,6 @@ class chess:
             print('\t'*tab, ''.join(self.board[i]))
         print("-----------------")
 
-import sys
-
 def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
     if(depth == 0):
         return node.heuristic_value(player)
