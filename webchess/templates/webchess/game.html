@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		div{width: 60; height: 60;}
+		table tr:nth-child(2n) td:nth-child(2n+1)
+		{
+		background-color: gray;
+		}
+		table tr:nth-child(2n+1) td:nth-child(2n)
+		{
+		background-color: gray;
+		}
+
+	</style>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		function drag(ob)
+		{
+		    ob.dataTransfer.setData("Text",ob.target.id);
+		}
+
+		function drop(ob)
+		{
+		    var id = ob.dataTransfer.getData("Text");
+		    var t = ob.target;
+		    if (ob.target.nodeName == "IMG")
+		        t = ob.target.parentNode;
+		    t.innerHTML = "";
+		    var img = document.getElementById(id);
+		    t.appendChild(img);
+		    console.log(img);
+		    $('#images').append(img.src + "; " )
+		    
+		    ob.preventDefault();    
+		}
+
+		function allowDrop(ob)
+		{
+		    ob.preventDefault();
+		}
+
+	</script>
+</head>
+
+{% block content %}
+
+<body>
+	<table id="game" border="1">
+	{% for i in "87654321"%}
+	<tr>
+		{% for j in "ABCDEFGH" %}
+		<td width="60" height="60" id="cell-{{ i }}{{ j }}">
+			<div ondrop="drop(event);" ondragover="allowDrop(event)"  id="{{ j }}{{ i }}"></div>
+		</td>
+		{% endfor %}
+	</tr>
+	{% endfor %}
+</table>
+<img src="http://icons.iconarchive.com/icons/arrioch/orbz/128/orbz-lightning-icon.png"  
+                ondragstart="drag(event);" id="1" draggable="true"/>
+	
+</body>
+
+</html>
+{% endblock %}

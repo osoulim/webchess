@@ -7,5 +7,5 @@ from .models import *
 
 @login_required
 def index(request):
-    return HttpResponse("fuck the system")
+    return render(request, "webchess/game.html")
 
