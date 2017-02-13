@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from webchess import views
+
 
 urlpatterns = [
-    url(r'^accounts/', include('registration.urls'), name="account"),
-    url(r'^webchess/', include('webchess.urls') ),
-    url(r'^admin/', admin.site.urls),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
+    url(r'^profile/$', views.profile, name='profile'),
+    url(r'^register/$', views.register, name='register'),
+    url(r'^verify/\d+/[a-f0-9]{32}$', views.verify, name="verify"),
+    url(r'^api/$', views.api),
+    url(r'^admin/', admin.site.urls, name='admin'),
+    url(r'^$', views.index, name='index'),
 ]

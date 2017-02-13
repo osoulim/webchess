@@ -28,30 +28,7 @@
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript">
-		function drag(ob)
-		{
-		    ob.dataTransfer.setData("Text",ob.target.id);
-		}
-
-		function drop(ob)
-		{
-		    var id = ob.dataTransfer.getData("Text");
-		    var t = ob.target;
-		    if (ob.target.nodeName == "IMG" && ob.target.id != id)
-		        t = ob.target.parentNode;
-		    t.innerHTML = "";
-		    var img = document.getElementById(id);
-		    t.appendChild(img);
-		    console.log(img);
-		    $('#move').append(t.id +" ; "+ id + "\n")
-		    
-		    ob.preventDefault();    
-		}
-
-		function allowDrop(ob)
-		{
-		    ob.preventDefault();
-		}
+		
 		function div_clear(item, index)
 		{
 			//console.log(item);
@@ -63,7 +40,7 @@
 			}
 		}
 
-		function print_state(state="rnbqkbnr/pppppppp/......../......../......../......../PPPPPPPP/RNBQKBNR//")
+		function print_state(state)
 	    {
 	    	arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 	    	arr.forEach(div_clear);
@@ -85,11 +62,52 @@
 	    
 	    }
 
+	    function get_st(move)
+	    {
+	    	$.post("api/", {move : move}, function(data, status){
+	    		error = data.split("-")[0];
+	    		print_state(data.split("-")[1]);
+
+	    	});
+
+	    }
+
+		function drag(ob)
+		{
+		    ob.dataTransfer.setData("Text",ob.target.id);
+		}
+
+		function drop(ob)
+		{
+		    var id = ob.dataTransfer.getData("Text");
+		    var t = ob.target;
+		    if (ob.target.nodeName == "IMG" && ob.target.id != id)
+		        t = ob.target.parentNode;
+		    t.innerHTML = "";
+		    var img = document.getElementById(id);
+		    t.appendChild(img);
+		    console.log(img);
+		    move = id +" "+ t.id;
+		    $('#move').append(move);
+		    get_st(move);
+		    
+		    ob.preventDefault();    
+		}
+
+		function allowDrop(ob)
+		{
+		    ob.preventDefault();
+		}
+
+
+		
+
+
 	</script>
 </head>
 
 
-<body onload='print_state()'>
+<body onload='print_state("{{ state }}");'>
 	<table id="loc" border="1">
 	{% for i in "87654321"%}
 	<tr>
