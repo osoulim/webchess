@@ -1,20 +1,28 @@
+{% block content %}
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
 	<title></title>
 	<style type="text/css">
-		div{width: 60; height: 60;}
-		table tr:nth-child(2n) td:nth-child(2n+1)
-		{
-		background-color: gray;
-		}
-		table tr:nth-child(2n+1) td:nth-child(2n)
-		{
-		background-color: gray;
-		}
+	div 
+	{
+		width:60px;
+		height:60px;
 
+	}
+	table tr:nth-child(2n) td:nth-child(2n+1) 
+	{
+  
+		background-color: gray;
+	}
+	table tr:nth-child(2n+1) td:nth-child(2n) 
+	{
+    	background-color: gray;
+	}
 	</style>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript">
 		function drag(ob)
 		{
@@ -31,7 +39,7 @@
 		    var img = document.getElementById(id);
 		    t.appendChild(img);
 		    console.log(img);
-		    $('#images').append(img.src + "; " )
+		    $('#move').append(t.id +" ; "+ id + "\n")
 		    
 		    ob.preventDefault();    
 		}
@@ -40,28 +48,59 @@
 		{
 		    ob.preventDefault();
 		}
+		function div_clear(item, index)
+		{
+			//console.log(item);
+			for(i = 1; i < 9; i++)
+			{
+				id = "#"+item+i
+				//console.log(id);
+				$(id).empty();
+			}
+		}
+
+		function print_state(state="rnbqkbnr/pppppppp/......../......../......../......../PPPPPPPP/RNBQKBNR//")
+	    {
+	    	arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+	    	arr.forEach(div_clear);
+	    	mat = state.split("/");
+	    	for(i = 0; i < 8; i++)
+	    	{
+	    		for(j = 0; j < 8; j++)
+	    		{
+	    			if(mat[i][j] == '.')
+	    				continue;
+	    			id = '#' + arr[j] + (8-i);
+	    			img_id = (8-i) + arr[j];
+	    			
+	    			address = '{% static "webchess/" %}' + mat[i][j] + '.png';
+	    			
+	    			$(id).append("<img ondragstart='drag(event);' draggable='true' width='55' height='55' class='"+mat[i][j]+"' src='"+address+"' id='"+img_id+"' />");
+	    		}
+	    	}
+	    
+	    }
 
 	</script>
 </head>
 
-{% block content %}
 
-<body>
-	<table id="game" border="1">
+<body onload='print_state()'>
+	<table id="loc" border="1">
 	{% for i in "87654321"%}
 	<tr>
 		{% for j in "ABCDEFGH" %}
-		<td width="60" height="60" id="cell-{{ i }}{{ j }}">
-			<div ondrop="drop(event);" ondragover="allowDrop(event)"  id="{{ j }}{{ i }}"></div>
+		<td >
+			<div id="{{ j }}{{ i }}" ondrop="drop(event);" ondragover="allowDrop(event)">
+            	fuck
+            </div>
 		</td>
 		{% endfor %}
 	</tr>
 	{% endfor %}
 </table>
-<img src="http://icons.iconarchive.com/icons/arrioch/orbz/128/orbz-lightning-icon.png"  
-                ondragstart="drag(event);" id="1" draggable="true"/>
-	
-</body>
 
+</body>
+<div id="move"></div>
 </html>
 {% endblock %}
