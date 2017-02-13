@@ -20,6 +20,10 @@
 	{
     	background-color: gray;
 	}
+	table td
+	{
+		text-align: center;
+	}
 	</style>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -33,7 +37,7 @@
 		{
 		    var id = ob.dataTransfer.getData("Text");
 		    var t = ob.target;
-		    if (ob.target.nodeName == "IMG")
+		    if (ob.target.nodeName == "IMG" && ob.target.id != id)
 		        t = ob.target.parentNode;
 		    t.innerHTML = "";
 		    var img = document.getElementById(id);

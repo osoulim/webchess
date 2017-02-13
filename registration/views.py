@@ -6,8 +6,10 @@ from django.contrib.auth.models import User
 from django.core.validators import *
 from django.core.mail import *
 from django.conf import settings
-import hashlib
 from django.contrib.auth.decorators import login_required
+from .models import Game
+import hashlib
+
 # Create your views here.
 
 def register(request):
@@ -46,6 +48,9 @@ def register(request):
 		new_user = User.objects.create_user(username, email, pwd)
 		new_user.is_staff = False
 		new_user.save()
+
+		game = Game(player = new_user)
+		game.save()
 
 		u_id = User.objects.get(username = username).id
 		active_link =  "http://" + request.META["HTTP_HOST"] + "/accounts/verify/" + str(u_id) + "/" + hashlib.md5((username + email + "HELL").encode()).hexdigest() 

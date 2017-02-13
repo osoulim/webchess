@@ -170,9 +170,9 @@ class chess:
         self.board[x1][y1] = dead
 
     def heuristic_value(self, color):
-        return [len(list(self.next_move_gen(color))) - len(list(self.next_move_gen(1-color))), None]
+        # return [len(list(self.next_move_gen(color))) - len(list(self.next_move_gen(1-color))), None]
 
-        val = {"p": 1, "b": 3.5, "r": 5.25, "n": 3.5, "q":9.75, "k":0, ".":0}
+        val = {"p": 1, "b": 3, "r": 5, "n": 3, "q":9, "k":-1000, ".":0}
         ret = 0
         for i in range(8):
             for j in range(8):
@@ -182,7 +182,7 @@ class chess:
                     ret -= val[self.board[i][j].lower()]
         if(color):
             ret = -ret
-        return [ret, None]
+        return (ret, None)
 
     def pr_table(self, tab = 0):
         print("-----------------")
@@ -195,15 +195,29 @@ class chess:
         dest = mv.split()[1]
         x0, y0 = 8 - int(src[1]), ord(src[0]) - ord("A")
         x1, y1 = 8 - int(dest[1]), ord(dest[0]) - ord("A")
-        self.move((x0, y0, x1, y1))
+        move = (x0, y0, x1, y1)
+        if(not self.check_move(move)):
+            return False
+        self.move(move)
+        return True
+    
+    def check_move(self, mv):
+        color = 0
+        if('A' <= self.board[mv[0]][mv[1]] <= 'Z'):
+            color = 1
+        for move in self.next_possible_moves(color):
+            if(move[:4] == mv):
+                return True
+        return False
+
 
 def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
     if(depth == 0):
         return node.heuristic_value(player)
     #print(len(list(node.next_possible_moves(player))))
     if(maxim):
-        v = [-inf, None]
-        for mv in node.next_possible_moves(player):
+        v = (-inf, None)
+        for mv in node.next_move_gen(player):
             # child = chess(str(node))
             # child.move(mv)
             node.move(mv)
@@ -211,14 +225,14 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
             node.undo_move(mv)
             
             if(tmp[0] >= v[0]):
-                v[0], v[1] = tmp[0], mv
+                v = (tmp[0], mv)
             a = max(a, v[0])
             if(a >= b):
                 break
         return v
     else:
-        v = [inf, None]
-        for mv in node.next_possible_moves(1 - player):
+        v = (inf, None)
+        for mv in node.next_move_gen(1 - player):
             # child = chess(str(node))
             # child.move(mv)
             node.move(mv)
@@ -226,7 +240,7 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
             node.undo_move(mv)
             
             if(tmp[0] <= v[0]):
-                v[0], v[1] = tmp[0], mv
+                v = (tmp[0], mv)
             b = min(b, v[0])
             if(a >= b):
                 break
@@ -238,7 +252,8 @@ def main():
     tmp.pr_table()
     while(1):
         mv = input()
-        tmp.user_move(mv)
+        while(not tmp.user_move(mv)):
+            mv=input("enter correct move")
         tmp.pr_table()
 
         ai_mv = alpha_beta_pruning(tmp, 4, -inf, inf, 0, 1)[1]
