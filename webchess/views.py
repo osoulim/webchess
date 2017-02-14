@@ -24,6 +24,8 @@ def index(request):
 
 @login_required
 def game(request):
+	if(not request.user.is_staff):
+		HttpResponseRedirect(reverse("index"))
 	temp_cont = {'body' : "" , 'title' : "The Game Page"}
 	game = Game.objects.get(player = request.user)
 	content = {"state" : game.state}
@@ -39,6 +41,10 @@ def api(request):
 	usr = request.user
 	game = Game.objects.get(player = usr)
 	tmp = chess(game.state)
+	if(len(list(tmp.next_possible_moves(1))) == 0 and tmp.king_is_under_attack(1)):
+		return HttpResponse("You LOST!!-" + game.state)
+	if(len(list(tmp.next_possible_moves(1))) == 0 and (not tmp.king_is_under_attack(1))):
+		return HttpResponse("POT-" + game.state)
 	if(not tmp.user_move(move)):
 		return HttpResponse("wrong way!-" + game.state)
 	ai_move = alpha_beta_pruning(tmp, 4, a = -inf, b = inf, player = 0, maxim = 1)
@@ -51,10 +57,6 @@ def api(request):
 	tmp.move(ai_move[1])
 	game.state = str(tmp)
 	game.save()
-	if(len(list(tmp.next_possible_moves(1))) == 0 and tmp.king_is_under_attack(1)):
-		return HttpResponse("You LOST!!-" + game.state)
-	if(len(list(tmp.next_possible_moves(1))) == 0 and (not tmp.king_is_under_attack(1))):
-		return HttpResponse("POT-" + game.state)
 
 	return HttpResponse("ai move was:" + str(ai_move[1]) + "-" + game.state)
 
@@ -83,7 +85,7 @@ def logout(request):
 
 def register(request):
 	cont = {"error" : "Singup here!"}
-	temp_cont = {'body' : render_to_string("registration/register.html", cont) , 'title' : "register"}
+	temp_cont = {'body' : "" , 'title' : "register"}
 
 	if(request.method == "POST"):
 		username  = request.POST.get("username")
@@ -93,6 +95,8 @@ def register(request):
 			pass
 		else:
 			cont['error']="There is a user with this username :/"
+			temp_cont['body'] =  render_to_string("registration/register.html", cont)
+			return render(request, "template.html", temp_cont)
 
 		
 		email  = request.POST.get("email")
@@ -100,6 +104,8 @@ def register(request):
 			validate_email(email)
 		except:
 			cont['error']="email is not valid :/"
+			temp_cont['body'] =  render_to_string("registration/register.html", cont)
+			return render(request, "template.html", temp_cont)
 
 		try:
 			user = User.objects.get(email=email)
@@ -107,13 +113,13 @@ def register(request):
 			pass
 		else:
 			cont['error']="There is a user with this email :/"
+			temp_cont['body'] =  render_to_string("registration/register.html", cont)
+			return render(request, "template.html", temp_cont)
 
 		pwd = request.POST.get("password")
 		repwd = request.POST.get("repassword")
 		if(pwd != repwd):
 			cont['error']="Passwords doesnt match :/"
-		
-		if(cont["error"]):
 			temp_cont['body'] =  render_to_string("registration/register.html", cont)
 			return render(request, "template.html", temp_cont)
 
@@ -125,12 +131,15 @@ def register(request):
 		game = Game(player = new_user)
 		game.save()
 
-		u_id = User.objects.get(username = username).id
-		active_link =  "http://" + request.META["HTTP_HOST"] + "/accounts/verify/" + str(u_id) + "/" + hashlib.md5((username + email + "HELL").encode()).hexdigest() 
+		u_id = new_user.id
+		active_link =  "http://" + request.META["HTTP_HOST"] + "/verify/" + str(u_id) + "/" + hashlib.md5((username + email + "HELL").encode()).hexdigest() 
 		send_mail('activitation link', 'activate your account and confirm your mail with this link: \n' + active_link, settings.EMAIL_HOST_USER ,[email], fail_silently=False)
-		temp_cont["body"] = "new user created and verify email sent, now just go and login :))"
+		temp_cont['body'] = "new user created and verify email sent, now just go and login :))"
+		return render(request, "template.html", temp_cont)
 	
+	temp_cont = {'body' : render_to_string("registration/register.html", cont) , 'title' : "register"}
 	return render(request, "template.html", temp_cont)
+
 
 def verify(request):
 	temp_cont = {'body' : "" , 'title' : "Verify account"}
@@ -157,4 +166,4 @@ def reset_game(request):
 	g = Game.objects.get(player = usr)
 	g.reset_game()
 	g.save()
-	return HttpResponseRedirect(reverse("index"))
+	return HttpResponseRedirect(reverse("game"))

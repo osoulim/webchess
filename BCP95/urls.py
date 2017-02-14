@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^register/$', views.register, name='register'),
     url(r'^verify/\d+/[a-f0-9]{32}$', views.verify, name="verify"),
-    url(r'^api/$', views.api),
+    url(r'^api/$', views.api, name="api"),
     url(r'^admin/', admin.site.urls, name='admin'),
     url(r'^reset_game/$', views.reset_game, name="reset"),
     url(r'^game/$', views.game, name='game'),

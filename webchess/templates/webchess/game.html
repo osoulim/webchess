@@ -19,6 +19,8 @@
 		{
 			arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 			arr.forEach(div_clear);
+			$("#out0").empty();
+			$("#out1").empty();
 			mat = state.split("/");
 			for(i = 0; i < 8; i++)
 			{
@@ -34,13 +36,26 @@
 					$(id).append("<img ondragstart='drag(event);' draggable='true' width='55' height='55' class='"+mat[i][j]+"' src='"+address+"' id='"+img_id+"' />");
 				}
 			}
+			for(i = 0; i < mat[8].length; i++)
+			{
+				address = '{% static "webchess/" %}' + mat[8][i] + '.png';
+				$("#out0").append("<img width='55' height='55' src='"+address+"' />");
+			}
+
+			for(i = 0; i < mat[9].length; i++)
+			{
+				address = '{% static "webchess/" %}' + mat[9][i] + '.png';
+				$("#out1").append("<img width='55' height='55' src='"+address+"' />");
+			}
+			
+
 
 		}
 
 		function get_st(move)
 		{
 			$("#game").html("thinking...");
-			$.post("api/", {move : move}, function(data, status){
+			$.post("{% url 'api' %}", {move : move}, function(data, status){
 				error = data.split("-")[0];
 				print_state(data.split("-")[1]);
 				$("#game").html(error);
@@ -84,12 +99,18 @@
 	<table id="board" border="1">
 	{% for i in "87654321"%}
 	<tr>
+		{% if i == "8" %}
+			<td rowspan="8" width="150" id="out0"></td>
+		{% endif %}
 		{% for j in "ABCDEFGH" %}
 		<td >
 			<div id="{{ j }}{{ i }}" class="square" ondrop="drop(event);" ondragover="allowDrop(event)">
             </div>
 		</td>
 		{% endfor %}
+		{% if i == "8" %}
+			<td rowspan="8" width="150" id="out1"></td>
+		{% endif %}
 	</tr>
 	{% endfor %}
 </table>
