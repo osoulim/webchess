@@ -1,0 +1,52 @@
+{% block contents %}
+{% load static %}
+<html>
+	<head>
+		<title>Play CHESS!!!!!</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'webchess/style.css' %}">
+
+	</head>
+	
+	<body>		
+
+		<header>
+			<div class="innertube">
+				<h1>Playing chess!!</h1>
+			</div>
+		</header>
+		
+		<div id="wrapper">
+		
+			<main>
+					<h1>{{ title }}</h1>
+					<div class="innertube">
+						{{ body }}
+					</div>
+			</main>
+			
+			<nav>
+				<div class="innertube">
+					{% if user.is_authenticated %}
+						<h5>Wellcome {{ user.get_username }}</h5>
+						<a href="{% url 'index' %}">Game Page</a><br>
+						<a href="{% url 'reset' %}">Reset Game</a><br>
+						<a href="{% url 'logout' %}">Logout</a><br>
+					{% else %}
+						<a href="{% url 'login' %}">Login</a><br>
+						<a href="{% url 'register' %}">Register</a><br>
+
+					{% endif %}
+				</div>
+			</nav>
+		
+		</div>
+		
+		<footer>
+			<div class="innertube">
+				<p>All rights reserved by mamzi 2017 :DDD</p>
+			</div>
+		</footer>
+	
+	</body>
+</html>
+{% endblock %}

@@ -213,7 +213,7 @@ class chess:
         return False
 
 
-def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
+def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 0, maxim = 1):
     if(depth == 0):
         return node.heuristic_value(player)
     if(maxim):
@@ -225,8 +225,6 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
             tmp = alpha_beta_pruning(node, depth-1, a, b, player, 0)
             node.undo_move(mv)
 
-            if(depth == 4):
-                    print(tmp[0], mv)
             if(tmp[0] > v[0]):
                 v = (tmp[0], mv)
             a = max(a, v[0])

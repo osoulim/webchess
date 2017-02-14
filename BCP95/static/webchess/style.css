@@ -1,0 +1,86 @@
+div.square 
+{
+	width:60px;
+	height:60px;
+
+}
+#board tr:nth-child(2n) td:nth-child(2n+1) 
+{
+
+	background-color: gray;
+}
+#board tr:nth-child(2n+1) td:nth-child(2n) 
+{
+	background-color: gray;
+}
+#board td
+{
+	text-align: center;
+}
+
+body {
+	margin:0;
+	padding:0;
+	font-family: Sans-Serif;
+	line-height: 1.5em;
+}
+
+header {
+	background: #ccc;
+	height: 60px;
+	text-align: center;
+}
+
+header h1 {
+	margin: 0;
+	padding-top: 15px;
+}
+
+main {
+	padding-bottom: 10010px;
+	margin-bottom: -10000px;
+	float: left;
+	width: 100%;
+}
+
+nav {
+	padding-bottom: 10010px;
+	margin-bottom: -10000px;
+	float: left;
+	width: 230px;
+	margin-left: -230px;
+	background: #eee;
+}
+
+footer {
+	clear: left;
+	width: 100%;
+	background: #ccc;
+	text-align: center;
+	padding: 4px 0;
+}
+
+#wrapper {
+	overflow: hidden;
+}
+			
+.innertube {
+	margin: 15px; /* Padding for content */
+	margin-top: 0;
+	text-align: center;
+}
+
+p {
+	color: #555;
+}
+
+nav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav ul a {
+	color: darkgreen;
+	text-decoration: none;
+}
