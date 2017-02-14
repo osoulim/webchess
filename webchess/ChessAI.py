@@ -218,12 +218,16 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
         return node.heuristic_value(player)
     if(maxim):
         v = (-inf, None)
-        for mv in node.next_possible_moves(player):
+        if(depth == 4): moves = node.next_possible_moves(player)
+        else: moves = node.next_move_gen(player)
+        for mv in moves:
             node.move(mv)
             tmp = alpha_beta_pruning(node, depth-1, a, b, player, 0)
             node.undo_move(mv)
-            
-            if(tmp[0] >= v[0]):
+
+            if(depth == 4):
+                    print(tmp[0], mv)
+            if(tmp[0] > v[0]):
                 v = (tmp[0], mv)
             a = max(a, v[0])
             if(a >= b):
@@ -231,12 +235,12 @@ def alpha_beta_pruning(node, depth, a = -inf, b = inf, player = 1, maxim = 1):
         return v
     else:
         v = (inf, None)
-        for mv in node.next_possible_moves(1 - player):
+        for mv in node.next_move_gen(1 - player):
             node.move(mv)
             tmp = alpha_beta_pruning(node, depth-1, a, b, player, 1)
             node.undo_move(mv)
             
-            if(tmp[0] <= v[0]):
+            if(tmp[0] < v[0]):
                 v = (tmp[0], mv)
             b = min(b, v[0])
             if(a >= b):

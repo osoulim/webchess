@@ -27,12 +27,23 @@ def api(request):
 	game = Game.objects.get(player = usr)
 	tmp = chess(game.state)
 	if(not tmp.user_move(move)):
-		return HttpResponse(move + "-" + game.state)
+		return HttpResponse("wrong way!-" + game.state)
 	ai_move = alpha_beta_pruning(tmp, 4, a = -inf, b = inf, player = 0, maxim = 1)
+	game.state = str(tmp)
+	game.save()	
+	if(ai_move[1] == None):
+		return HttpResponse("AI Gived up!!-" + game.state)
+	if(ai_move[1] == None and not tmp.king_is_under_attack(0)):
+		return HttpResponse("POT-" + game.state)
 	tmp.move(ai_move[1])
 	game.state = str(tmp)
 	game.save()
-	return HttpResponse("Haha! do your best-" + game.state)
+	if(len(list(tmp.next_possible_moves(1))) == 0 and tmp.king_is_under_attack(1)):
+		return HttpResponse("You LOST!!-" + game.state)
+	if(len(list(tmp.next_possible_moves(1))) == 0 and not tmp.king_is_under_attack(1)):
+		return HttpResponse("POT-" + game.state)
+
+	return HttpResponse("ai move was:" + str(ai_move[1]) + "-" + game.state)
 
 
 def register(request):

@@ -67,7 +67,7 @@
 	    	$.post("api/", {move : move}, function(data, status){
 	    		error = data.split("-")[0];
 	    		print_state(data.split("-")[1]);
-
+	    		$("#game").html(error);
 	    	});
 
 	    }
@@ -88,7 +88,7 @@
 		    t.appendChild(img);
 		    console.log(img);
 		    move = id +" "+ t.id;
-		    $('#move').append(move);
+		    //$('#move').append(move);
 		    get_st(move);
 		    
 		    ob.preventDefault();    
@@ -123,6 +123,6 @@
 </table>
 
 </body>
-<div id="move"></div>
+<div id="game"></div>
 </html>
 {% endblock %}
