@@ -15,8 +15,15 @@ from .models import Game
 import hashlib
 from .ChessAI import *
 
-@login_required
+
 def index(request):
+	temp_cont = {'body' : "" , 'title' : "Welcome to the Chess game"}
+	temp_cont['body'] = render_to_string("webchess/index.html")
+	return render(request, "template.html", temp_cont)
+
+
+@login_required
+def game(request):
 	temp_cont = {'body' : "" , 'title' : "The Game Page"}
 	game = Game.objects.get(player = request.user)
 	content = {"state" : game.state}

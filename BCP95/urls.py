@@ -26,5 +26,7 @@ urlpatterns = [
     url(r'^api/$', views.api),
     url(r'^admin/', admin.site.urls, name='admin'),
     url(r'^reset_game/$', views.reset_game, name="reset"),
+    url(r'^game/$', views.game, name='game'),
     url(r'^$', views.index, name='index'),
+
 ]
